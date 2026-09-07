@@ -30,11 +30,9 @@ import {
   getClinicalPatient,
   type ClinicalPatient,
 } from "@/lib/clinical-evolution-data";
-import { AiWritingTrainingWidget } from "@/components/ai-writing-training/ai-writing-training-widget";
 import {
   countAnsweredEbaiItems,
   createEmptyEbaiAnswers,
-  EBAI_INSTRUMENT,
   EBAI_ITEM_COUNT,
   type EbaiLikert,
   type EbaiScoreResult,
@@ -265,8 +263,6 @@ export function EbaiApplicationPageView({
           Finalizar
         </Button>
       </div>
-
-      <AiWritingTrainingWidget trainingContextKey={EBAI_INSTRUMENT} />
     </PageContainer>
   );
 }

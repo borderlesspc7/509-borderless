@@ -86,7 +86,6 @@ const AT_PERMISSIONS = [
   PERMISSIONS.CLINICAL_EVOLUTION_MANAGE,
   PERMISSIONS.DOCUMENT_TEMPLATES_VIEW,
   PERMISSIONS.DOCUMENT_TEMPLATES_MANAGE,
-  PERMISSIONS.REPORTS_VIEW,
   PERMISSIONS.INTERNAL_MESSAGING,
 ] as const satisfies readonly Permission[];
 
@@ -167,8 +166,8 @@ export const FAMILIA_ALLOWED_PATHS = [FAMILIA_HOME_PATH] as const;
 
 export const ROUTE_PERMISSIONS: Record<string, Permission> = {
   "/agenda": PERMISSIONS.AGENDA_VIEW,
-  "/agenda/configuracoes": PERMISSIONS.AGENDA_VIEW,
-  "/painel-chamada": PERMISSIONS.AGENDA_VIEW,
+  "/agenda/configuracoes": PERMISSIONS.AGENDA_MANAGE,
+  "/painel-chamada": PERMISSIONS.AGENDA_MANAGE,
   "/dashboard": PERMISSIONS.DASHBOARD_VIEW,
   "/dashboard/busca-agenda": PERMISSIONS.AGENDA_SEARCH,
   "/prontuario": PERMISSIONS.PATIENTS_VIEW,
@@ -179,8 +178,10 @@ export const ROUTE_PERMISSIONS: Record<string, Permission> = {
   "/dashboard/profissionais": PERMISSIONS.PROFESSIONALS_VIEW,
   "/dashboard/equipe-terapeutica": PERMISSIONS.PROFESSIONALS_VIEW,
   "/dashboard/avaliacoes": PERMISSIONS.ASSESSMENTS_VIEW,
-  "/dashboard/programas": PERMISSIONS.ASSESSMENTS_VIEW,
+  "/dashboard/programas": PERMISSIONS.PROGRAMS_MANAGE,
   "/dashboard/programas/novo": PERMISSIONS.PROGRAMS_MANAGE,
+  "/dashboard/programacoes": PERMISSIONS.ASSESSMENTS_VIEW,
+  "/dashboard/avaliacoes/aplicar": PERMISSIONS.ASSESSMENTS_VIEW,
   "/evolucao": PERMISSIONS.CLINICAL_EVOLUTION_VIEW,
   "/dashboard/evolucao": PERMISSIONS.CLINICAL_EVOLUTION_VIEW,
   "/dashboard/orientacoes-familia": PERMISSIONS.CLINICAL_EVOLUTION_VIEW,
@@ -189,7 +190,6 @@ export const ROUTE_PERMISSIONS: Record<string, Permission> = {
   "/dashboard/nutricao": PERMISSIONS.PATIENTS_VIEW,
   "/dashboard/modelos": PERMISSIONS.DOCUMENT_TEMPLATES_VIEW,
   "/dashboard/relatorios": PERMISSIONS.REPORTS_VIEW,
-  "/dashboard/relatorios/treinamento-ia": PERMISSIONS.CLINICAL_EVOLUTION_VIEW,
   "/dashboard/auditoria": PERMISSIONS.AUDIT_LOGS_VIEW,
   "/chat": PERMISSIONS.INTERNAL_MESSAGING,
   "/dashboard/empresa": PERMISSIONS.SETTINGS_MANAGE,
@@ -315,14 +315,20 @@ export function isFamilyAllowedPath(pathname: string) {
   return (FAMILIA_ALLOWED_PATHS as readonly string[]).includes(normalizedPath);
 }
 
-export function getAccessDeniedRedirectPath(profile: UserProfile | string) {
+export function getHomePathForProfile(profile: UserProfile | string) {
   if (isFamilyOnlyRole(profile)) {
-    return `${FAMILIA_HOME_PATH}?acesso=negado`;
+    return FAMILIA_HOME_PATH;
   }
 
-  return isReceptionOnlyRole(profile)
-    ? `${RECEPCAO_HOME_PATH}?acesso=negado`
-    : "/dashboard?acesso=negado";
+  if (isReceptionOnlyRole(profile)) {
+    return RECEPCAO_HOME_PATH;
+  }
+
+  return "/dashboard";
+}
+
+export function getAccessDeniedRedirectPath(profile: UserProfile | string) {
+  return `${getHomePathForProfile(profile)}?acesso=negado`;
 }
 
 export function getRoutePermission(pathname: string): Permission | null {
@@ -348,6 +354,7 @@ export function canAccessRoute(
   }
 
   const role = normalizeRole(profile);
+  const normalizedPath = normalizePathname(pathname);
 
   if (role === ROLES.FAMILIA && !isFamilyAllowedPath(pathname)) {
     return false;
@@ -359,6 +366,13 @@ export function canAccessRoute(
 
   if (role === ROLES.RECEPCAO && !isReceptionAllowedPath(pathname)) {
     return false;
+  }
+
+  if (
+    normalizedPath === "/dashboard/relatorios" ||
+    normalizedPath.startsWith("/dashboard/relatorios/")
+  ) {
+    return canAccessClinicalReports(profile, isMaster);
   }
 
   const permission = getRoutePermission(pathname);

@@ -31,13 +31,11 @@ import {
   type ClinicalPatient,
 } from "@/lib/clinical-evolution-data";
 import { calculateExactAgeInMonths } from "@/lib/pedi/age";
-import { AiWritingTrainingWidget } from "@/components/ai-writing-training/ai-writing-training-widget";
 import {
   createEmptySensoryAnswers,
   isSensoryAgeBand,
   SENSORY_AGE_BAND_LABELS,
   SENSORY_AGE_BANDS,
-  SENSORY_PROFILE_INSTRUMENT,
   SENSORY_SECTION_LABELS,
   SENSORY_SECTIONS,
   suggestSensoryAgeBand,
@@ -351,8 +349,6 @@ export function SensoryProfileApplicationPageView({
       </div>
 
       {scores ? <SensoryScoreResults scores={scores} /> : null}
-
-      <AiWritingTrainingWidget trainingContextKey={SENSORY_PROFILE_INSTRUMENT} />
     </PageContainer>
   );
 }

@@ -57,9 +57,25 @@ export default function AuthLayout({
             alt="Nurse Care - Soluções em Saúde"
             width={160}
             height={52}
-            className="h-10 w-auto object-contain"
+            className="h-10 w-auto object-contain dark:hidden"
             priority
           />
+          <div className="hidden items-center gap-2.5 dark:flex">
+            <Image
+              src="/brand/logo-icon.png"
+              alt=""
+              width={36}
+              height={36}
+              className="size-9 object-contain"
+              priority
+            />
+            <div className="leading-tight">
+              <p className="text-sm font-semibold text-foreground">Nurse Care</p>
+              <p className="text-[0.65rem] font-medium text-sky-600 dark:text-sky-300">
+                Soluções em Saúde
+              </p>
+            </div>
+          </div>
         </header>
 
         <div className="flex flex-1 items-center justify-center px-4 py-8 sm:px-8 lg:px-12 lg:py-10 xl:px-20">

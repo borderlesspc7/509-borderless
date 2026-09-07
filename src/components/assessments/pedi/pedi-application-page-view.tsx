@@ -44,13 +44,11 @@ import {
   getClinicalPatient,
   type ClinicalPatient,
 } from "@/lib/clinical-evolution-data";
-import { AiWritingTrainingWidget } from "@/components/ai-writing-training/ai-writing-training-widget";
 import {
   createEmptyPediAnswers,
   createEmptyPediCaregiverAnswers,
   PEDI_AREA_LABELS,
   PEDI_AREAS,
-  PEDI_INSTRUMENT,
   PEDI_MOBILITY_TRANSFER_ITEM_IDS,
   PEDI_TRANSFER_MODE_LABELS,
   PEDI_TRANSFER_MODES,
@@ -484,8 +482,6 @@ export function PediApplicationPageView({
           patientName={selectedPatient?.name}
         />
       ) : null}
-
-      <AiWritingTrainingWidget trainingContextKey={PEDI_INSTRUMENT} />
 
       <PediItemMap items={items} />
 

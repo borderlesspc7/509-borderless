@@ -11,7 +11,6 @@ import {
 } from "@/app/actions/demuca-actions";
 import { DemucaAnswerGrid } from "@/components/assessments/demuca/demuca-answer-grid";
 import { DemucaScoreCard } from "@/components/assessments/demuca/demuca-score-card";
-import { AiWritingTrainingWidget } from "@/components/ai-writing-training/ai-writing-training-widget";
 import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,6 @@ import {
   calculateDemucaScore,
   countAnsweredDemucaItems,
   createEmptyDemucaAnswers,
-  DEMUCA_INSTRUMENT,
   DEMUCA_ITEM_COUNT,
   type DemucaEvaluationHistoryItem,
   type DemucaRating,
@@ -406,8 +404,6 @@ export function DemucaApplicationPageView({
           Finalizar
         </Button>
       </div>
-
-      <AiWritingTrainingWidget trainingContextKey={DEMUCA_INSTRUMENT} />
     </PageContainer>
   );
 }

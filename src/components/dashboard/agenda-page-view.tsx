@@ -7,6 +7,7 @@ import { DailyAgenda } from "@/components/dashboard/daily-agenda";
 import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
+import { useUserRole } from "@/hooks/use-user-role";
 import type { CareType } from "@/lib/supabase/database.types";
 
 type AgendaPageViewProps = {
@@ -16,6 +17,7 @@ type AgendaPageViewProps = {
 export function AgendaPageView({ careType = "ABA" }: AgendaPageViewProps) {
   const title =
     careType === "CONVENTIONAL" ? "Agenda Convencional" : "Agenda ABA";
+  const { canManageAgenda } = useUserRole();
 
   return (
     <PageContainer size="wide" className="space-y-4">
@@ -26,23 +28,25 @@ export function AgendaPageView({ careType = "ABA" }: AgendaPageViewProps) {
           { label: title },
         ]}
         actions={
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-9"
-            nativeButton={false}
-            render={
-              <Link
-                href="/painel-chamada"
-                target="_blank"
-                rel="noopener noreferrer"
-              />
-            }
-          >
-            <Monitor className="size-3.5" aria-hidden />
-            Abrir painel da recepção
-            <ExternalLink className="size-3 opacity-60" aria-hidden />
-          </Button>
+          canManageAgenda ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9"
+              nativeButton={false}
+              render={
+                <Link
+                  href="/painel-chamada"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+            >
+              <Monitor className="size-3.5" aria-hidden />
+              Abrir painel da recepção
+              <ExternalLink className="size-3 opacity-60" aria-hidden />
+            </Button>
+          ) : undefined
         }
       />
 

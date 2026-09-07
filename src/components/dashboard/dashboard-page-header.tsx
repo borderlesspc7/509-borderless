@@ -1,5 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+
+import { useUserRole } from "@/hooks/use-user-role";
+import { getHomePathForProfile } from "@/lib/rbac";
 
 type BreadcrumbItem = {
   label: string;
@@ -17,6 +22,17 @@ export function DashboardPageHeader({
   breadcrumbs = [{ label: "Home", href: "/dashboard" }],
   actions,
 }: DashboardPageHeaderProps) {
+  const { profile } = useUserRole();
+  const homePath = getHomePathForProfile(profile);
+
+  const resolvedBreadcrumbs = breadcrumbs.map((item) => {
+    if (item.href === "/dashboard" && homePath !== "/dashboard") {
+      return { ...item, href: homePath };
+    }
+
+    return item;
+  });
+
   return (
     <div className="app-page-header flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="space-y-2">
@@ -25,8 +41,8 @@ export function DashboardPageHeader({
           aria-label="Breadcrumb"
           className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground sm:text-sm"
         >
-          {breadcrumbs.map((item, index) => {
-            const isLast = index === breadcrumbs.length - 1;
+          {resolvedBreadcrumbs.map((item, index) => {
+            const isLast = index === resolvedBreadcrumbs.length - 1;
 
             return (
               <span key={`${item.label}-${index}`} className="flex items-center gap-1">

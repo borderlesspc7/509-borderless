@@ -118,7 +118,7 @@ export function NewAppointmentDialog({
   careType = "ABA",
   onCreated,
 }: NewAppointmentDialogProps) {
-  const { canForceAppointment } = useUserRole();
+  const { canForceAppointment, canSearchAgenda } = useUserRole();
   const toast = useAppToast();
   const prefilled = isPrefilledMode(defaults);
 
@@ -511,7 +511,7 @@ export function NewAppointmentDialog({
               </section>
             )}
 
-            {!prefilled ? (
+            {!prefilled && canSearchAgenda ? (
               <div className="flex items-center gap-3 rounded-lg border border-dashed border-border/80 bg-background px-4 py-2.5">
                 <CalendarSearch
                   className="size-4 shrink-0 text-primary"

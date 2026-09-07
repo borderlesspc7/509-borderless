@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from "react";
@@ -51,6 +52,18 @@ function resolveTheme(preference: ThemePreference): "light" | "dark" {
 
 function applyResolved(resolved: "light" | "dark") {
   document.documentElement.classList.toggle("dark", resolved === "dark");
+  document.documentElement.style.colorScheme = resolved;
+}
+
+function readClientTheme(): {
+  preference: ThemePreference;
+  resolved: "light" | "dark";
+} {
+  const preference = readStoredPreference();
+  return {
+    preference,
+    resolved: resolveTheme(preference),
+  };
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -58,12 +71,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     useState<ThemePreference>("system");
   const [resolved, setResolved] = useState<"light" | "dark">("light");
 
-  useEffect(() => {
-    const nextPreference = readStoredPreference();
-    setPreferenceState(nextPreference);
-    const nextResolved = resolveTheme(nextPreference);
-    setResolved(nextResolved);
-    applyResolved(nextResolved);
+  useLayoutEffect(() => {
+    const next = readClientTheme();
+    setPreferenceState(next.preference);
+    setResolved(next.resolved);
+    applyResolved(next.resolved);
   }, []);
 
   useEffect(() => {

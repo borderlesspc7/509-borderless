@@ -292,12 +292,15 @@ export async function updateProfessionalAction(
   }
 
   if (error || !data) {
+    const message = error?.message ?? "";
     return {
       success: false,
       error:
         error?.code === "42501"
           ? "Sem permissão para editar profissionais."
-          : error?.message ?? "Não foi possível atualizar o profissional.",
+          : message.includes("user_profiles_professional_role_check")
+            ? "Cargo não aceito pelo banco. Execute supabase/apply-professional-roles.sql no SQL Editor do Supabase."
+            : message || "Não foi possível atualizar o profissional.",
     };
   }
 
@@ -464,11 +467,13 @@ export async function createTeamMemberAction(
   }
 
   if (profileError || !profileRow) {
+    const message = profileError?.message ?? "";
     return {
       success: false,
-      error:
-        profileError?.message ??
-        "Usuário criado, mas o perfil não pôde ser atualizado.",
+      error: message.includes("user_profiles_professional_role_check")
+        ? "Cargo não aceito pelo banco. Execute supabase/apply-professional-roles.sql no SQL Editor do Supabase."
+        : message ||
+          "Usuário criado, mas o perfil não pôde ser atualizado.",
     };
   }
 

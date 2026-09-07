@@ -14,7 +14,6 @@ import {
 } from "@/app/actions/entity-avatar-actions";
 import { useAppToast } from "@/hooks/use-app-toast";
 import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
-import { useAiEntityContext } from "@/features/ai/presentation/hooks/use-ai-entity-context";
 import { PageContainer } from "@/components/layout/page-container";
 import {
   PatientAdicionaisSection,
@@ -52,11 +51,6 @@ export function PatientEditPageView({
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-
-  useAiEntityContext({
-    entityId: patient.id,
-    entityLabel: patient.full_name,
-  });
 
   function handleChange<K extends keyof typeof values>(
     field: K,

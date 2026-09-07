@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AgendaConfiguracoesPage() {
-  await requirePermission(PERMISSIONS.AGENDA_VIEW);
+  await requirePermission(PERMISSIONS.AGENDA_MANAGE);
 
   return <AgendaWorkloadSettingsView />;
 }

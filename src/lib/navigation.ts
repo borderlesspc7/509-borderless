@@ -14,6 +14,7 @@ import {
 import { isAssessmentApplyPath } from "@/lib/assessment-apply-routes";
 import type { UserProfile } from "@/lib/auth";
 import {
+  canAccessRoute,
   hasPermission,
   isReceptionAllowedPath,
   isReceptionOnlyRole,
@@ -156,11 +157,6 @@ export const mainNavEntries: NavEntry[] = [
         href: "/dashboard/modelos",
         permission: PERMISSIONS.DOCUMENT_TEMPLATES_VIEW,
       },
-      {
-        title: "Treinamento IA — Relatórios",
-        href: "/dashboard/relatorios/treinamento-ia",
-        permission: PERMISSIONS.CLINICAL_EVOLUTION_VIEW,
-      },
     ],
   },
   {
@@ -186,12 +182,12 @@ export const mainNavEntries: NavEntry[] = [
       {
         title: "Configurações",
         href: "/agenda/configuracoes",
-        permission: PERMISSIONS.AGENDA_VIEW,
+        permission: PERMISSIONS.AGENDA_MANAGE,
       },
       {
         title: "Monitor",
         href: "/painel-chamada",
-        permission: PERMISSIONS.AGENDA_VIEW,
+        permission: PERMISSIONS.AGENDA_MANAGE,
       },
     ],
   },
@@ -230,35 +226,41 @@ export function filterNavEntriesForProfile(
 ): NavEntry[] {
   const receptionOnly = !isMaster && isReceptionOnlyRole(profile);
 
+  function isVisibleHref(href: string, permission: Permission, masterOnly?: boolean) {
+    if (masterOnly && !isMaster) {
+      return false;
+    }
+
+    if (!hasPermission(profile, permission, isMaster)) {
+      return false;
+    }
+
+    const path = href.split("?")[0] ?? href;
+
+    if (!canAccessRoute(path, profile, isMaster)) {
+      return false;
+    }
+
+    if (receptionOnly && !isReceptionAllowedPath(path)) {
+      return false;
+    }
+
+    return true;
+  }
+
   return mainNavEntries
     .map((entry) => {
       if (entry.kind === "link") {
-        if (!hasPermission(profile, entry.permission, isMaster)) {
-          return null;
-        }
-
-        if (receptionOnly && !isReceptionAllowedPath(entry.href)) {
+        if (!isVisibleHref(entry.href, entry.permission)) {
           return null;
         }
 
         return entry;
       }
 
-      const visibleItems = entry.items.filter((item) => {
-        if (item.masterOnly && !isMaster) {
-          return false;
-        }
-
-        if (!hasPermission(profile, item.permission, isMaster)) {
-          return false;
-        }
-
-        if (receptionOnly && !isReceptionAllowedPath(item.href)) {
-          return false;
-        }
-
-        return true;
-      });
+      const visibleItems = entry.items.filter((item) =>
+        isVisibleHref(item.href, item.permission, item.masterOnly)
+      );
 
       if (visibleItems.length === 0) {
         return null;

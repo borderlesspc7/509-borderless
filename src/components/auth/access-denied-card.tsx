@@ -1,7 +1,11 @@
+"use client";
+
 import { ShieldAlert } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { useUserRole } from "@/hooks/use-user-role";
+import { getHomePathForProfile } from "@/lib/rbac";
 
 type AccessDeniedCardProps = {
   title?: string;
@@ -12,6 +16,9 @@ export function AccessDeniedCard({
   title = "Acesso restrito",
   description = "Seu perfil não possui permissão para acessar esta área.",
 }: AccessDeniedCardProps) {
+  const { profile } = useUserRole();
+  const homeHref = getHomePathForProfile(profile);
+
   return (
     <div className="flex min-h-[50vh] items-center justify-center px-4">
       <div className="app-surface-card w-full max-w-md p-6 text-center">
@@ -23,9 +30,9 @@ export function AccessDeniedCard({
         <Button
           className="mt-6"
           nativeButton={false}
-          render={<Link href="/dashboard" />}
+          render={<Link href={homeHref} />}
         >
-          Voltar para a agenda
+          Voltar ao início
         </Button>
       </div>
     </div>

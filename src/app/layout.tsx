@@ -43,15 +43,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} h-full antialiased`}
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              '(()=>{try{const t=localStorage.getItem("509-theme");const d=t==="dark"||((t!=="light")&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d)document.documentElement.classList.add("dark")}catch(e){}})();',
-          }}
-        />
-      </head>
-      <body className="h-full overflow-hidden bg-background">
+      <body className="h-full overflow-hidden bg-background" suppressHydrationWarning>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

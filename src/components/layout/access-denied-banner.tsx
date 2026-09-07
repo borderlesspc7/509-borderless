@@ -37,7 +37,7 @@ export function AccessDeniedBanner() {
             Acesso negado para o seu perfil.
           </p>
           <p className="text-xs text-muted-foreground">
-            Você foi redirecionado para a agenda. Solicite permissão ao
+            Você foi redirecionado para uma área permitida. Solicite permissão ao
             administrador se precisar desta funcionalidade.
           </p>
         </div>

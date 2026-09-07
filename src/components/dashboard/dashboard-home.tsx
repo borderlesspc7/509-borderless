@@ -10,9 +10,11 @@ import { useUserRole } from "@/hooks/use-user-role";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getDefaultDateRange } from "@/lib/dashboard-analytics-types";
 import { PageContainer } from "@/components/layout/page-container";
+import { PERMISSIONS } from "@/lib/rbac";
 
 export function DashboardHome() {
-  const { fullName, displayRole } = useUserRole();
+  const { fullName, displayRole, canViewPatients, hasPermission } = useUserRole();
+  const canViewAgenda = hasPermission(PERMISSIONS.AGENDA_VIEW);
   const defaultRange = getDefaultDateRange();
   const [startDate, setStartDate] = useState(defaultRange.startDate);
   const [endDate, setEndDate] = useState(defaultRange.endDate);
@@ -35,34 +37,40 @@ export function DashboardHome() {
           <p className="mt-4 text-xs font-medium text-white/50">{displayRole}</p>
         </div>
 
-        <div className="relative z-10 mt-6 grid gap-2 sm:grid-cols-2 lg:mt-0 lg:w-[390px]">
-          <Link
-            href="/agenda"
-            className="group flex min-h-20 items-center gap-3 rounded-xl border border-white/15 bg-white/8 px-4 py-3 outline-none transition-colors hover:bg-white/14 focus-visible:ring-3 focus-visible:ring-white/40"
-          >
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white text-[oklch(0.44_0.11_225)]">
-              <CalendarDays className="size-5" aria-hidden />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm font-semibold">Abrir agenda</span>
-              <span className="mt-0.5 block text-xs text-white/55">Consultas e horários</span>
-            </span>
-            <ArrowRight className="size-4 text-white/45 transition-transform group-hover:translate-x-0.5" aria-hidden />
-          </Link>
-          <Link
-            href="/dashboard/pacientes"
-            className="group flex min-h-20 items-center gap-3 rounded-xl border border-white/15 bg-white/8 px-4 py-3 outline-none transition-colors hover:bg-white/14 focus-visible:ring-3 focus-visible:ring-white/40"
-          >
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[oklch(0.72_0.11_350)] text-white">
-              <UsersRound className="size-5" aria-hidden />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm font-semibold">Aprendizes</span>
-              <span className="mt-0.5 block text-xs text-white/55">Cadastros e prontuários</span>
-            </span>
-            <ArrowRight className="size-4 text-white/45 transition-transform group-hover:translate-x-0.5" aria-hidden />
-          </Link>
-        </div>
+        {canViewAgenda || canViewPatients ? (
+          <div className="relative z-10 mt-6 grid gap-2 sm:grid-cols-2 lg:mt-0 lg:w-[390px]">
+            {canViewAgenda ? (
+              <Link
+                href="/agenda"
+                className="group flex min-h-20 items-center gap-3 rounded-xl border border-white/15 bg-white/8 px-4 py-3 outline-none transition-colors hover:bg-white/14 focus-visible:ring-3 focus-visible:ring-white/40"
+              >
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white text-[oklch(0.44_0.11_225)]">
+                  <CalendarDays className="size-5" aria-hidden />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold">Abrir agenda</span>
+                  <span className="mt-0.5 block text-xs text-white/55">Consultas e horários</span>
+                </span>
+                <ArrowRight className="size-4 text-white/45 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </Link>
+            ) : null}
+            {canViewPatients ? (
+              <Link
+                href="/dashboard/pacientes"
+                className="group flex min-h-20 items-center gap-3 rounded-xl border border-white/15 bg-white/8 px-4 py-3 outline-none transition-colors hover:bg-white/14 focus-visible:ring-3 focus-visible:ring-white/40"
+              >
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[oklch(0.72_0.11_350)] text-white">
+                  <UsersRound className="size-5" aria-hidden />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold">Aprendizes</span>
+                  <span className="mt-0.5 block text-xs text-white/55">Cadastros e prontuários</span>
+                </span>
+                <ArrowRight className="size-4 text-white/45 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </Link>
+            ) : null}
+          </div>
+        ) : null}
       </section>
 
       <Tabs

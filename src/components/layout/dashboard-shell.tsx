@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { Suspense, useState } from "react";
 
 import { AccessDeniedBanner } from "@/components/layout/access-denied-banner";
@@ -18,14 +17,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-
-const AiModuleCopilot = dynamic(
-  () =>
-    import("@/features/ai/presentation/components/ai-assistants").then(
-      (mod) => ({ default: mod.AiModuleCopilot })
-    ),
-  { ssr: false }
-);
 
 type DashboardShellProps = {
   children: React.ReactNode;
@@ -72,7 +63,6 @@ export function DashboardShell({
         {needsTermsAcceptance ? (
           <TermsAlert initialNeedsAcceptance />
         ) : null}
-        <AiModuleCopilot />
       </div>
 
       <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
